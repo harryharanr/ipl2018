@@ -6,7 +6,7 @@ class HomeScreen extends React.Component {
       console.log({name:'MSD',age:35});
       return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:'yellow' }}>
-          <Text>Home Screen!</Text>
+          <Text>Home Screen!!</Text>
         </View>
       );
     }
