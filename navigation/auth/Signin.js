@@ -128,15 +128,24 @@ export default class LoginScreen2 extends Component {
     } = this.state;
     this.setState({ isLoading: true });
     // Simulate an API call
-    setTimeout(() => {
-      LayoutAnimation.easeInEaseOut();
-      this.setState({
-        isLoading: false,
-        isEmailValid: this.validateEmail(signupemail) || this.emailInput.shake(),
-        isPasswordValid: signuppass.length >= 8 || this.passwordInput.shake(),
-        isConfirmationValid: signuppass == passwordConfirmation || this.confirmationInput.shake(),
-      });
-    }, 1500);
+    firebase.auth().createUserWithEmailAndPassword(signupemail, signuppass)
+                    .then(() => {
+                      console.log("Success"); 
+                      this.setState({ error: '', loading: false }); 
+                    })
+                    .catch(() => {
+                      console.log("Error");
+                        this.setState({ error: 'Authentication failed.', loading: false });
+                    });
+    // setTimeout(() => {
+    //   LayoutAnimation.easeInEaseOut();
+    //   this.setState({
+    //     isLoading: false,
+    //     isEmailValid: this.validateEmail(signupemail) || this.emailInput.shake(),
+    //     isPasswordValid: signuppass.length >= 8 || this.passwordInput.shake(),
+    //     isConfirmationValid: signuppass == passwordConfirmation || this.confirmationInput.shake(),
+    //   });
+    // }, 1500);
   }
 
   render() {
