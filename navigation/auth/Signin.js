@@ -98,7 +98,7 @@ export default class LoginScreen2 extends Component {
             .then(() => { 
               this.setState({ error: '', loading: false });
               this.props.navigation.navigate('App');
-              //console.log("success");
+              console.log("success");
             })
             .catch(() => {
               console.log("err");
