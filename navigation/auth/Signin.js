@@ -15,6 +15,7 @@ import { Input, Button } from 'react-native-elements'
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
+import ModalTest from '../../shared/Modal/Modal';
 import firebase from 'firebase';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -56,6 +57,9 @@ export default class LoginScreen2 extends Component {
       isEmailValid: true,
       isPasswordValid: true,
       isConfirmationValid: true,
+      modalStatus: false,
+      modalText: '',
+      modalButtonText: ''
     };
 
     this.selectCategory = this.selectCategory.bind(this);
@@ -94,30 +98,58 @@ export default class LoginScreen2 extends Component {
     } = this.state;
     this.setState({ isLoading: true });
     // Simulate an API call
-    firebase.auth().signInWithEmailAndPassword(loginemail, loginpassword)
-            .then(() => { 
-              this.setState({ error: '', loading: false });
-              this.props.navigation.navigate('App');
-              console.log("success");
-            })
-            .catch(() => {
-              console.log("err");
-                // Login was not successful, let's create a new account
-                // firebase.auth().createUserWithEmailAndPassword(email, password)
-                //     .then(() => { this.setState({ error: '', loading: false }); })
-                //     .catch(() => {
-                //         this.setState({ error: 'Authentication failed.', loading: false });
-                //     });
-            });
-    // setTimeout(() => {
-    //   LayoutAnimation.easeInEaseOut();
-    //   this.setState({
-    //     isLoading: false,
-    //     isEmailValid: this.validateEmail(loginemail) || this.emailInput.shake(),
-    //     isPasswordValid: loginpassword.length >= 8 || this.passwordInput.shake(),
-    //   });
-    // }, 1500);
-    
+    if(this.validateEmail(loginemail) && loginpassword.length >= 8){
+      firebase.auth().signInWithEmailAndPassword(loginemail, loginpassword)
+              .then(() => { 
+                this.setState({ error: '', loading: false });
+                this.props.navigation.navigate('App');
+                console.log("success");
+              })
+              .catch((err) => {
+                console.log(err);
+                switch(err.code){
+                  case 'auth/user-not-found':
+                    this.setState({
+                      modalStatus: true,
+                      modalText: 'USER NOT FOUND. SIGN UP',
+                      modalButtonText: 'SIGN UP'
+                    });
+                    break;
+                  case 'auth/wrong-password':
+                    this.setState({
+                      modalStatus: true,
+                      modalText: 'WRONG PASSWORD.TRY LOGGING AGAIN',
+                      modalButtonText: 'LOGIN AGAIN'
+                    });
+                  case 'auth/invalid-email':
+                    this.setState({
+                      modalStatus: true,
+                      modalText: 'INVALID EMAIL',
+                      modalButtonText: 'LOGIN AGAIN'
+                    });
+                  case 'auth/user-disabled':
+                    this.setState({
+                      modalStatus: true,
+                      modalText: 'DISABLED USER',
+                      modalButtonText: 'LOGIN AGAIN'
+                    });
+                  default:
+                    this.setState({
+                      modalStatus: true,
+                      modalText: 'SOMETHING BAD HAPPENED',
+                      modalButtonText: 'TRY AGAIN'
+                    });            
+                }
+              });
+    }
+    else{
+      this.setState({
+        isLoading: false,
+        isEmailValid: this.validateEmail(loginemail) || this.emailInput.shake(),
+        isPasswordValid: loginpassword.length >= 8 || this.passwordInput.shake(),
+      });
+    }
+
   }
 
   signUp() {
@@ -128,24 +160,63 @@ export default class LoginScreen2 extends Component {
     } = this.state;
     this.setState({ isLoading: true });
     // Simulate an API call
-    firebase.auth().createUserWithEmailAndPassword(signupemail, signuppass)
+    if(this.validateEmail(signupemail) && signuppass.length >= 8){
+      firebase.auth().createUserWithEmailAndPassword(signupemail, signuppass)
                     .then(() => {
                       console.log("Success"); 
                       this.setState({ error: '', loading: false }); 
                     })
-                    .catch(() => {
-                      console.log("Error");
-                        this.setState({ error: 'Authentication failed.', loading: false });
+                    .catch((err) => {
+                      console.log(err);
+                      switch(err.code){
+                        case 'auth/email-already-in-use':
+                          this.setState({
+                            modalStatus: true,
+                            modalText: 'EMAIL ALREADY REGISTERED',
+                            modalButtonText: 'LOG IN'
+                          });
+                          break;
+                        case 'auth/invalid-email':
+                          this.setState({
+                            modalStatus: true,
+                            modalText: 'INVALID EMAIL.ENTER VALID EMAIL',
+                            modalButtonText: 'TRY AGAIN'
+                          });
+                        case 'auth/operation-not-allowed':
+                          this.setState({
+                            modalStatus: true,
+                            modalText: 'OPERATION NOT ALLOWED',
+                            modalButtonText: 'TRY AGAIN'
+                          });
+                        default:
+                          this.setState({
+                            modalStatus: true,
+                            modalText: 'SOMETHING BAD HAPPENED',
+                            modalButtonText: 'TRY AGAIN'
+                          });            
+                      }
                     });
-    // setTimeout(() => {
-    //   LayoutAnimation.easeInEaseOut();
-    //   this.setState({
-    //     isLoading: false,
-    //     isEmailValid: this.validateEmail(signupemail) || this.emailInput.shake(),
-    //     isPasswordValid: signuppass.length >= 8 || this.passwordInput.shake(),
-    //     isConfirmationValid: signuppass == passwordConfirmation || this.confirmationInput.shake(),
-    //   });
-    // }, 1500);
+    }
+    else{
+      this.setState({
+        isLoading: false,
+        isEmailValid: this.validateEmail(signupemail) || this.emailInput.shake(),
+        isPasswordValid: signuppass.length >= 8 || this.passwordInput.shake(),
+        isConfirmationValid: signuppass == passwordConfirmation || this.confirmationInput.shake(),
+      });
+    }
+  }
+
+  closeModal = () => {
+    this.setState({
+      loginemail: '',
+      loginpassword: '',
+      signupemail: '',
+      signuppass: '',
+      isLoading: false,
+      modalStatus: false,
+      modalText: ''
+    });
   }
 
   render() {
@@ -160,15 +231,26 @@ export default class LoginScreen2 extends Component {
       signupemail,
       signuppass,
       passwordConfirmation,
+      modalStatus,
+      modalText,
+      modalButtonText
     } = this.state;
     const isLoginPage = selectedCategory === 0;
     const isSignUpPage = selectedCategory === 1;
     return (
       <View style={styles.container}>
+        {/* <Modal isVisible={modalStatus}>
+          <View style={{ flex: 1 }}>
+            <Text>{modalText}</Text>
+          </View>
+        </Modal> */}
+        
         <ImageBackground
           source={BG_IMAGE}
           style={styles.bgImage}
         >
+        {modalStatus?<ModalTest isModalVisible={modalStatus} toggleModal={this.closeModal} 
+          message={modalText} buttonText={modalButtonText}/>: null}
           {this.state.fontLoaded ?
             <View>
               <KeyboardAvoidingView contentContainerStyle={styles.loginContainer} behavior='position'>
@@ -365,6 +447,7 @@ export default class LoginScreen2 extends Component {
           <Text>Loading...</Text>
         }
         </ImageBackground>
+        
       </View>
     );
   }
