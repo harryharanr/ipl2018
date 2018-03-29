@@ -72,7 +72,7 @@ class TwitterScreen extends React.Component {
 
     
     render() {
-     let form = <ActivityIndicator />
+     let form = <ActivityIndicator style={{justifyContent: center, alignItems:center}}/>
       if(this.state.tweets.length >0){
         
         form = this.state.tweets.map((tweet,index) => {
