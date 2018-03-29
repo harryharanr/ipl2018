@@ -72,7 +72,7 @@ class TwitterScreen extends React.Component {
 
     
     render() {
-     let form = <ActivityIndicator style={{justifyContent: center, alignItems:center}}/>
+     let form = <ActivityIndicator />
       if(this.state.tweets.length >0){
         
         form = this.state.tweets.map((tweet,index) => {
@@ -85,8 +85,8 @@ class TwitterScreen extends React.Component {
             <Text>{tweet.text}</Text>
             {tweet.entities? tweet.entities.media? tweet.entities.media[0].type === 'photo' ?
               <Image
-              style={{width:130,height:130}}
-              resizeMode="cover"
+              style={{flex:1 , width: '100%', height: '100%'}}
+              resizeMode="contain"
               source={{ uri: tweet.entities.media[0].media_url }}
             />: null : null : null
             }
