@@ -3,19 +3,38 @@ import { Text,View,ActivityIndicator, Image, StyleSheet, RefreshControl } from '
 import axios from 'axios';
 import { Card, ListItem, Button, Divider } from 'react-native-elements'
 import { ScrollView } from 'react-native-gesture-handler';
-
+import BottomModal from './../shared/Modal/BottomModal';
+import firebase from 'firebase';
 
 class TwitterScreen extends React.Component {
+  static navigationOptions = ({ navigation }) => {
+    const params = navigation.state.params || {};
+
+    return {
+      headerTitle: 'Twitter',
+      headerRight: (
+        <Button onPress={params.openFilterModal} title="Filter" color='rgba(232, 147, 142, 1)' />
+      ),
+    };
+  };
   constructor(props) {
     super(props);
     this.state = {
       tweets:[],
       refreshing: false,
-      accessToken: ''
+      accessToken: '',
+      modalStatus: false,
+      modalText: '',
+      modalButtonText: '',
+      teams: [],
+      selectedTeam: '',
+      searchString: 'IPL'
     };
     this.getTweets = this.getTweets.bind(this);
   }
     componentWillMount(){
+      this.props.navigation.setParams({ openFilterModal: this.openFilterModal });
+
       var data = "grant_type=client_credentials";
       var self = this;
       var xhr = new XMLHttpRequest();
@@ -23,11 +42,9 @@ class TwitterScreen extends React.Component {
 
       xhr.addEventListener("readystatechange", function () {
         if (this.readyState === 4) {
-          console.log(JSON.parse(this.responseText));
           let response = JSON.parse(this.responseText);
-          console.log(response.access_token);
           self.setState({accessToken: response.access_token})
-          self.getTweets(response.access_token);
+          self.getTweets(response.access_token,self.state.searchString);
         }
       });
 
@@ -36,11 +53,9 @@ class TwitterScreen extends React.Component {
       xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded");
       xhr.setRequestHeader("cache-control", "no-cache");
       xhr.send(data);
-      
-      
     }
 
-    getTweets = (token) => {
+    getTweets = (token,searchString) => {
       var data = null;
       var xhr = new XMLHttpRequest();
       xhr.withCredentials = true;
@@ -48,9 +63,7 @@ class TwitterScreen extends React.Component {
 
       xhr.addEventListener("readystatechange", function () {
         if (this.readyState === 4) {
-          console.log('Tweets after success');
           let response = JSON.parse(this.responseText);
-          console.log(response);
           self.setState({
             tweets: response.statuses,
             refreshing: false
@@ -58,19 +71,51 @@ class TwitterScreen extends React.Component {
         }
       });
 
-      xhr.open("GET", "https://api.twitter.com/1.1/search/tweets.json?q=from%3AChennaiIPL&result_type=recent");
+      xhr.open("GET", "https://api.twitter.com/1.1/search/tweets.json?q=from%3A"+searchString+"&result_type=recent");
       xhr.setRequestHeader("authorization", "Bearer "+token);
       xhr.setRequestHeader("accept-language", "application/json");
       xhr.setRequestHeader("cache-control", "no-cache");
       xhr.send(data);
+      self.getTeams();
+    }
+
+    getTeams = () => {
+      var self = this;
+      let ref = firebase.database().ref('Teams/');
+      ref.on("value", function(snapshot) {
+        console.log(snapshot.val());
+        let teams = snapshot.val().map((item)=>{
+          return {"TeamID": item.TeamID,"TeamName": item.TeamName}
+        });
+        self.setState({teams: teams})
+     }, function (error) {
+        console.log("Error: " + error.code);
+     });
     }
 
     _onRefresh() {
       this.setState({refreshing: true});
-      this.getTweets(this.state.accessToken);
+      this.getTweets(this.state.accessToken,this.state.searchString);
     }
 
-    
+    closeModal = (value) => {
+      console.log('value from dropdown');
+      console.log(value);
+      this.setState({
+        modalStatus: false,
+        modalText: ''
+      });
+    }
+
+    openFilterModal = () =>{
+      console.log('Modal Test');
+      this.setState({
+        modalStatus: true,
+        modalText: 'Filter',
+        modalButtonText: 'Filter'
+      });
+    }
+
     render() {
      let form = <ActivityIndicator />
       if(this.state.tweets.length >0){
@@ -103,7 +148,8 @@ class TwitterScreen extends React.Component {
             onRefresh={this._onRefresh.bind(this)}/>
          }>
           {form}
-
+          {this.state.modalStatus?<BottomModal isModalVisible={this.state.modalStatus} toggleModal={this.closeModal} 
+          teams={this.state.teams} buttonText={this.state.modalButtonText}/>: null}
         </ScrollView>
         );  
       

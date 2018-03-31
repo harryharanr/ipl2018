@@ -15,7 +15,7 @@ export default class ModalTest extends Component {
                 </View>
               </TouchableOpacity>
             
-          </View>
+            </View>
           </Modal>
         );
       }
