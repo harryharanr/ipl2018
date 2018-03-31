@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import RootNavigation from './navigation/RootNavigation';
 import * as firebase from 'firebase';
 
+console.ignoredYellowBox = ['Setting a timer'];
 export default class App extends React.Component {
   state = {
     isLoadingComplete: false,

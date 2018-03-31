@@ -6,37 +6,34 @@ export default class BottomModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedTeam: ''
+            selectedTeam: 1
         };
       }
     render() {
         return (
           <Modal isVisible={this.props.isModalVisible} 
-                onBackdropPress={this.props.toggleModal} style={styles.bottomModal}>
+                onBackdropPress={() => this.props.toggleModal(this.state.selectedTeam)} style={styles.bottomModal}>
             <View style={styles.modalContent}>
             
-              <Text>Filter Tweets</Text>
-              <TouchableOpacity onPress={this.props.toggleModal}>
-                <View>
-                    {/* <Picker
-                        selectedValue={this.state.language}
-                        onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}>
-                        <Picker.Item label="Java" value="java" />
-                        <Picker.Item label="JavaScript" value="js" />
-                    </Picker> */}
-                    <Picker
-                        selectedValue={this.state.selectedTeam}
-                        onValueChange={(itemValue, itemIndex) => this.setState({selectedTeam: itemValue})}>
-                            {this.props.teams.map((item,index)=>{
-                            return <Picker.Item key={index} label={item.TeamName} value={item.TeamID} />  
-                            })}
-                    </Picker>
-                    <View style={styles.button} onPress={this.props.toggleModal(this.state.selectedTeam)}>
-                        <Text style={{color:'#fff'}}>Filter</Text>
-                    </View>
+              <Text style={{'fontWeight':'bold','fontSize':18}}>Filter Tweets</Text>
+              
+              <View style={styles.contentStyle}>
+                <Text style={{'fontWeight':'bold','fontSize':18,'marginRight':10}}>Team:</Text>
+                <Picker selectedValue={this.state.selectedTeam} style={{'width':'75%'}}
+                      onValueChange={(itemValue, itemIndex) => this.setState({selectedTeam: itemValue})}>
+                        {this.props.teams.map((item,index)=>{
+                              return <Picker.Item key={index} label={item.TeamName} value={item.TeamID} />  
+                        })}
+                
+                </Picker>
+              </View>
+              <TouchableOpacity>
+                <View style={styles.button}>
+                  <Text style={{color:'#fff'}} onPress={() => this.props.toggleModal(this.state.selectedTeam)}>{this.props.buttonText}</Text>
                 </View>
-              </TouchableOpacity>
-            
+              
+              </TouchableOpacity>      
+                
             </View>
           </Modal>
         );
@@ -69,5 +66,12 @@ const styles = StyleSheet.create({
   bottomModal: {
     justifyContent: 'flex-end',
     margin: 0,
+  },
+  contentStyle:{
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+    marginLeft: 10,
   }
 });

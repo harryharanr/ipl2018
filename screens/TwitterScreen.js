@@ -5,6 +5,8 @@ import { Card, ListItem, Button, Divider } from 'react-native-elements'
 import { ScrollView } from 'react-native-gesture-handler';
 import BottomModal from './../shared/Modal/BottomModal';
 import firebase from 'firebase';
+import { Font } from 'expo';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 class TwitterScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -28,7 +30,8 @@ class TwitterScreen extends React.Component {
       modalButtonText: '',
       teams: [],
       selectedTeam: '',
-      searchString: 'IPL'
+      searchString: 'IPL',
+      fontLoaded: false
     };
     this.getTweets = this.getTweets.bind(this);
   }
@@ -55,12 +58,24 @@ class TwitterScreen extends React.Component {
       xhr.send(data);
     }
 
+    async componentDidMount() {
+      await Font.loadAsync({
+        'georgia': require('../assets/fonts/Georgia.ttf'),
+        'regular': require('../assets/fonts/Montserrat-Regular.ttf'),
+        'light': require('../assets/fonts/Montserrat-Light.ttf'),
+      });
+  
+      this.setState({ fontLoaded: true });
+      this.getTeams();
+    }
+
     getTweets = (token,searchString) => {
       var data = null;
       var xhr = new XMLHttpRequest();
       xhr.withCredentials = true;
       var self = this;
-
+      console.log("getTweets");
+      console.log(searchString);
       xhr.addEventListener("readystatechange", function () {
         if (this.readyState === 4) {
           let response = JSON.parse(this.responseText);
@@ -76,16 +91,15 @@ class TwitterScreen extends React.Component {
       xhr.setRequestHeader("accept-language", "application/json");
       xhr.setRequestHeader("cache-control", "no-cache");
       xhr.send(data);
-      self.getTeams();
     }
 
     getTeams = () => {
       var self = this;
-      let ref = firebase.database().ref('Teams/');
+      let ref = firebase.database().ref('TeamDetails/Teams/');
       ref.on("value", function(snapshot) {
         console.log(snapshot.val());
         let teams = snapshot.val().map((item)=>{
-          return {"TeamID": item.TeamID,"TeamName": item.TeamName}
+          return {"TeamID": item.TeamID,"TeamName": item.TeamName,"TwitterAccount":item.TwitterAccount};
         });
         self.setState({teams: teams})
      }, function (error) {
@@ -101,10 +115,17 @@ class TwitterScreen extends React.Component {
     closeModal = (value) => {
       console.log('value from dropdown');
       console.log(value);
+      let filteredTeam = this.state.teams.filter((item) => {
+                            return Number(item.TeamID) === Number(value);
+                          });
+      console.log(filteredTeam[0].TwitterAccount);
       this.setState({
         modalStatus: false,
-        modalText: ''
+        modalText: '',
+        searchString: filteredTeam[0].TwitterAccount,
+        refreshing: true
       });
+      this.getTweets(this.state.accessToken,filteredTeam[0].TwitterAccount);
     }
 
     openFilterModal = () =>{
@@ -123,9 +144,13 @@ class TwitterScreen extends React.Component {
         form = this.state.tweets.map((tweet,index) => {
           return (
           <Card key={index} style={styles.containerStyle}>
-            <Text>
-              {tweet.user.name}@{tweet.user.screen_name}
-            </Text>
+            <View style={styles.cardHeader}>
+              <Text style={styles.headerStyle}>
+                {tweet.user.name}
+              </Text>
+              <Text> @{tweet.user.screen_name}</Text>
+            </View>
+            
             <Divider style={styles.dividerStyle} />
             <Text>{tweet.text}</Text>
             {tweet.entities? tweet.entities.media? tweet.entities.media[0].type === 'photo' ?
@@ -136,7 +161,10 @@ class TwitterScreen extends React.Component {
             />: null : null : null
             }
             <Divider style={styles.dividerStyle} />
-            <Text>Retweets: {tweet.retweet_count}</Text>
+            <View style={styles.footerStyle}>
+              <Ionicons name='ios-heart' size={20} /> 
+              <Text style={{'marginLeft':6}}> {tweet.favorite_count}</Text>
+            </View>
           </Card>
           );
         });
@@ -170,6 +198,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginRight: 5,
     marginTop: 10,
+    fontFamily: 'regular',
   },
   dividerStyle: {
     shadowOpacity: 0.75,
@@ -178,6 +207,21 @@ const styles = StyleSheet.create({
     shadowOffset: { height: 0, width: 0 },
     marginTop: 7,
     marginBottom : 7
+  },
+  headerStyle:{
+    fontSize: 16,
+    fontWeight: 'bold',
+    fontFamily: 'regular'
+  },
+  cardHeader:{
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  footerStyle: {
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    flexDirection: 'row'
   }
 })
 
