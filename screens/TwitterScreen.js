@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text,View,ActivityIndicator, Image, StyleSheet, RefreshControl } from 'react-native';
+import { Text,View,ActivityIndicator, Image, StyleSheet, RefreshControl, TouchableOpacity, Linking } from 'react-native';
 import axios from 'axios';
 import { Card, ListItem, Button, Divider } from 'react-native-elements'
 import { ScrollView } from 'react-native-gesture-handler';
@@ -15,7 +15,12 @@ class TwitterScreen extends React.Component {
     return {
       headerTitle: 'Twitter',
       headerRight: (
-        <Button onPress={params.openFilterModal} title="Filter" color='rgba(232, 147, 142, 1)' />
+        <TouchableOpacity onPress={params.openFilterModal}>
+                <View style={styles.button}>
+                  <Text style={{color:'#fff'}}>Filter</Text>
+                </View>
+              
+        </TouchableOpacity>
       ),
     };
   };
@@ -137,6 +142,18 @@ class TwitterScreen extends React.Component {
       });
     }
 
+    handleClick = (url) => {
+      console.log("Link Opening"+url);
+      Linking.canOpenURL(url).then(supported => {
+        if (supported) {
+          Linking.openURL(url);
+        } else {
+          console.log("Don't know how to open URI: " + this.props.url);
+        }
+      });
+    };
+  
+
     render() {
      let form = <ActivityIndicator />
       if(this.state.tweets.length >0){
@@ -152,6 +169,8 @@ class TwitterScreen extends React.Component {
             </View>
             
             <Divider style={styles.dividerStyle} />
+             {/* TODO: Replace the next lines after implementing InApp browser */}
+            {/* <Text onPress={() => this.handleClick(tweet.entities.urls[0].url)}>{tweet.text}</Text> */}
             <Text>{tweet.text}</Text>
             {tweet.entities? tweet.entities.media? tweet.entities.media[0].type === 'photo' ?
               <Image
@@ -222,6 +241,15 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     flexDirection: 'row'
+  },
+  button: {
+    backgroundColor: 'rgba(232, 147, 142, 1)',
+    padding: 12,
+    margin: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    borderColor: 'rgba(0, 0, 0, 0.1)'
   }
 })
 

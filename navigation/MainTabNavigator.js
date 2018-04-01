@@ -1,6 +1,6 @@
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { TabNavigator, TabBarBottom } from 'react-navigation';
+import { TabNavigator, TabBarBottom, TabBarTop} from 'react-navigation';
 
 import { 
       HomeScreen ,
@@ -10,11 +10,40 @@ import {
       TwitterScreen
     } from '../screens/index';
 
+    const FixturesTab = TabNavigator(
+      {
+        Fixtures: {
+          screen: FixturesScreen,
+        },
+        Results: {
+          screen: FixturesScreen,
+        },
+      },
+      {
+        tabBarOptions: {
+          style: {
+            backgroundColor: '#fff',
+          },
+          indicatorStyle: {
+            backgroundColor:'black',
+          },
+          labelStyle:{
+            color:'black',
+            fontWeight: 'bold'
+          }
+        },
+        tabBarComponent: TabBarTop,
+        tabBarPosition: 'top',
+        animationEnabled: true,
+        swipeEnabled: true
+      }
+    );
+
 export default TabNavigator(
   {
     Home: { screen: HomeScreen },
     Teams: { screen: TeamsScreen },
-    Fixtures: { screen: FixturesScreen },
+    Fixtures: { screen: FixturesTab },
     Stats: { screen: StatsScreen },
     Twitter: { screen: TwitterScreen },
   },
@@ -47,6 +76,6 @@ export default TabNavigator(
     tabBarComponent: TabBarBottom,
     tabBarPosition: 'bottom',
     animationEnabled: true,
-    swipeEnabled: true
+    swipeEnabled: false
   }
 );

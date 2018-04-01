@@ -27,9 +27,9 @@ export default class BottomModal extends Component {
                 
                 </Picker>
               </View>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => this.props.toggleModal(this.state.selectedTeam)}>
                 <View style={styles.button}>
-                  <Text style={{color:'#fff'}} onPress={() => this.props.toggleModal(this.state.selectedTeam)}>{this.props.buttonText}</Text>
+                  <Text style={{color:'#fff'}}>{this.props.buttonText}</Text>
                 </View>
               
               </TouchableOpacity>      
