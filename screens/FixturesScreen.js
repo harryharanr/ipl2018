@@ -61,7 +61,7 @@ class FixturesScreen extends React.Component {
      if(this.state.fixtures){
        form = this.state.fixtures.map((item,index) => {
          return (
-          <Card key={index} style={item.Date == '7-Apr-18'?styles.currentContainerStyle:styles.containerStyle}>
+          <Card key={index} containerStyle={item.Date == '7-Apr-18'?styles.currentContainerStyle:styles.containerStyle}>
             <View style={styles.footerLeftStyle}>
               <Text style={{'justifyContent': 'flex-start'}}>{item.Date}</Text>
               <Text style={{'justifyContent': 'flex-end'}}>{item.Time}</Text>
@@ -100,33 +100,31 @@ const styles = StyleSheet.create({
   },
   containerStyle: {
     borderWidth: 1,
-    borderRadius: 2,
+    borderRadius: 10,
     borderColor: '#ddd',
     borderBottomWidth: 0,
-    shadowColor: '#000',
+    shadowColor: 'gray',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 5,
-    elevation: 1,
+    elevation: 5,
     marginLeft: 5,
     marginRight: 5,
-    marginTop: 10,
-    fontFamily: 'regular',
+    marginTop: 10
   },
   currentContainerStyle: {
     borderWidth: 1,
-    borderRadius: 2,
+    borderRadius: 10,
     borderColor: 'red',
     borderBottomWidth: 0,
-    shadowColor: '#000',
+    shadowColor: 'gray',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 5,
-    elevation: 1,
+    elevation: 5,
     marginLeft: 5,
     marginRight: 5,
-    marginTop: 10,
-    fontFamily: 'regular',
+    marginTop: 10
   },
   dividerStyle: {
     shadowOpacity: 0.75,

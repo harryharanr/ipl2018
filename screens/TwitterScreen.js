@@ -160,7 +160,7 @@ class TwitterScreen extends React.Component {
         
         form = this.state.tweets.map((tweet,index) => {
           return (
-          <Card key={index} style={styles.containerStyle}>
+          <Card key={index} containerStyle={styles.containerStyle}>
             <View style={styles.cardHeader}>
               <Text style={styles.headerStyle}>
                 {tweet.user.name}
@@ -206,18 +206,17 @@ class TwitterScreen extends React.Component {
 const styles = StyleSheet.create({
   containerStyle: {
     borderWidth: 1,
-    borderRadius: 2,
+    borderRadius: 10,
     borderColor: '#ddd',
     borderBottomWidth: 0,
-    shadowColor: '#000',
+    shadowColor: 'gray',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 5,
-    elevation: 1,
+    elevation: 5,
     marginLeft: 5,
     marginRight: 5,
-    marginTop: 10,
-    fontFamily: 'regular',
+    marginTop: 10
   },
   dividerStyle: {
     shadowOpacity: 0.75,
