@@ -1,16 +1,17 @@
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { TabNavigator, TabBarBottom, TabBarTop} from 'react-navigation';
+import { TabNavigator, TabBarBottom, TabBarTop, StackNavigator} from 'react-navigation';
 
 import { 
       HomeScreen ,
       TeamsScreen,
       FixturesScreen,
       StatsScreen,
-      TwitterScreen
+      TwitterScreen,
+      TeamDetailScreen
     } from '../screens/index';
 
-    const FixturesTab = TabNavigator(
+  const FixturesTab = TabNavigator(
       {
         Fixtures: {
           screen: FixturesScreen,
@@ -39,10 +40,28 @@ import {
       }
     );
 
+    const TeamStack = StackNavigator(
+      {
+        Team: {
+          screen: TeamsScreen,
+        },
+        TeamDetails: {
+          screen: TeamDetailScreen,
+        },
+      },
+      {
+        initialRouteName: 'Team',
+        headerMode:'screen'
+      },
+    );
+
 export default TabNavigator(
   {
     Home: { screen: HomeScreen },
-    Teams: { screen: TeamsScreen },
+    Teams: { screen: TeamStack,
+      navigationOptions:{
+        header: null
+    }},
     Fixtures: { screen: FixturesTab },
     Stats: { screen: StatsScreen },
     Twitter: { screen: TwitterScreen },
@@ -66,7 +85,7 @@ export default TabNavigator(
         // You can return any component that you like here! We usually use an
         // icon component from react-native-vector-icons
         return <Ionicons name={iconName} size={25} color={tintColor} />;
-      },
+      }
     }),
     tabBarOptions: {
       activeTintColor: 'tomato',

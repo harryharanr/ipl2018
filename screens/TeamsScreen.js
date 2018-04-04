@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, ActivityIndicator, StyleSheet } from 'react-native';
+import { Text, View, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Card, ListItem, Button, Divider } from 'react-native-elements'
 import firebase from 'firebase';
@@ -14,6 +14,11 @@ class TeamsScreen extends React.Component {
     this.state = {
       teams: []
     }
+  }
+
+  static navigationOptions = {
+    //header: null,
+    title: 'Teams',
   }
 
   componentWillMount() {
@@ -39,11 +44,16 @@ class TeamsScreen extends React.Component {
   }
 
   render() {
-      let form = <ActivityIndicator />
-      if(this.state.teams){
+      let form = <ActivityIndicator style = {styles.activityIndicator}/>
+      if(this.state.teams.length>0){
         form = this.state.teams.map((item,index) => {
           return (
-            <Card key={index} containerStyle={styles.containerStyle}>
+            <TouchableOpacity key={index}  onPress={() => this.props.navigation.navigate('TeamDetails',{
+              teamId: item.TeamID,
+              teamName: item.TeamName,
+            })}>
+            <Card containerStyle={styles.containerStyle}>
+              
               <View style={{flex: 1, flexDirection: 'row'}}>
                 <View style={{flex:4,backgroundColor:'#fff',justifyContent:'center',borderRightWidth:1,borderColor:'lightgrey'}}>
                     <Text style={{fontWeight:'bold',fontFamily:'regular',fontSize:15}}>{item.TeamName}</Text>
@@ -56,11 +66,17 @@ class TeamsScreen extends React.Component {
                   <Divider style={styles.dividerStyle} />
                   <View style={{flexDirection:'row'}}><Icon name='users' size={15} /><Text style={{marginLeft:5}}>{item.Players}</Text></View>
                 </View>
-                <View style={{flex:0.7,backgroundColor:'#fff',marginLeft:5,justifyContent:'center' }}>
-                    <Ionicons name='ios-arrow-dropright-outline' size={25}/>
+                <View style={{flex:0.7,backgroundColor:'#fff',marginLeft:5,justifyContent:'center' }}
+                  >
+                    <Ionicons name='ios-arrow-dropright-outline' size={26} 
+                        onPress={() => this.props.navigation.navigate('TeamDetails',{
+                          teamId: item.TeamID,
+                          teamName: item.TeamName,
+                        })}/>
                 </View>
               </View>
             </Card>
+            </TouchableOpacity>
           )
         })
       }
@@ -75,7 +91,7 @@ class TeamsScreen extends React.Component {
   const styles = StyleSheet.create({
     containerStyle: {
       borderWidth: 1,
-      borderRadius: 10,
+      borderRadius: 5,
       borderColor: '#ddd',
       borderBottomWidth: 0,
       shadowColor: 'gray',
@@ -95,7 +111,13 @@ class TeamsScreen extends React.Component {
       shadowOffset: { height: 0, width: 0 },
       marginTop: 7,
       marginBottom : 7
-    }
+    },
+    activityIndicator: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: 80
+   }
     
   })
 
