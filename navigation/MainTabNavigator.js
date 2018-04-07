@@ -8,7 +8,8 @@ import {
       FixturesScreen,
       StatsScreen,
       TwitterScreen,
-      TeamDetailScreen
+      TeamDetailScreen,
+      StatsDetailScreen
     } from '../screens/index';
 
   const FixturesTab = TabNavigator(
@@ -60,7 +61,7 @@ import {
         screen: StatsScreen,
       },
       Stats: {
-        screen: StatsScreen,
+        screen: StatsDetailScreen,
       },
     },{
       initialRouteName: 'GetStats',

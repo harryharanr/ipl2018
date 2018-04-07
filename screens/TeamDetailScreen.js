@@ -20,6 +20,13 @@ class TeamDetailScreen extends React.Component {
           left: true
         }
       };
+    async componentDidMount() {
+        await Font.loadAsync({
+          'georgia': require('../assets/fonts/Georgia.ttf'),
+          'regular': require('../assets/fonts/Montserrat-Regular.ttf'),
+          'light': require('../assets/fonts/Montserrat-Light.ttf'),
+        });
+    }
     componentWillMount(){
       var self = this;
         console.log(this.props.navigation.state.params.teamId);

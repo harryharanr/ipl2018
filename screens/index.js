@@ -4,3 +4,4 @@ export * from './StatsScreen';
 export * from './TeamsScreen';
 export * from './TwitterScreen';
 export * from './TeamDetailScreen';
+export * from './StatsDetailsScreen';
