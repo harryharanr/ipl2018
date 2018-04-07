@@ -55,6 +55,18 @@ import {
       },
     );
 
+    const StatsStack = StackNavigator({
+      GetStats: {
+        screen: StatsScreen,
+      },
+      Stats: {
+        screen: StatsScreen,
+      },
+    },{
+      initialRouteName: 'GetStats',
+        headerMode:'screen'
+    })
+
 export default TabNavigator(
   {
     Home: { screen: HomeScreen },
@@ -63,7 +75,9 @@ export default TabNavigator(
         header: null
     }},
     Fixtures: { screen: FixturesTab },
-    Stats: { screen: StatsScreen },
+    Stats: { screen: StatsStack, navigationOptions:{
+      header: null
+    }}, 
     Twitter: { screen: TwitterScreen },
   },
   {
