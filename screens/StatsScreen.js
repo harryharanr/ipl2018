@@ -12,6 +12,8 @@ import {
 import firebase from 'firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Font } from 'expo';
+import { stadiumList } from './../constants/Stadium';
+import { placeList } from './../constants/State';
 
 class StatsScreen extends React.Component {
   constructor(props) {
@@ -21,24 +23,15 @@ class StatsScreen extends React.Component {
       query: '',
       secondQuery: '',
       criteria: '',
-      placeCriteria: '',
       bowlerType: '',
-      results: []
+      results: [],
+      stadiumSelected: '',
+      stadium: stadiumList,
+      place: placeList,
+      placeSelected: ''
     };
   }
 
-  static renderFilm(film) {
-    // const { title, director, opening_crawl, episode_id } = film;
-    // const roman = episode_id < ROMAN.length ? ROMAN[episode_id] : episode_id;
-
-    return (
-      <View>
-        <Text style={styles.titleText}>{film}</Text>
-        {/* <Text style={styles.directorText}>({director})</Text>
-        <Text style={styles.openingText}>{opening_crawl}</Text> */}
-      </View>
-    );
-  }
   static navigationOptions = {
     //header: null,
     title: 'Stats',
@@ -83,7 +76,7 @@ class StatsScreen extends React.Component {
   getStats = () => {
     var self =this;
     if(this.state.criteria === '4'){
-      if(this.state.query !== ''){
+      if(this.state.query !== '' && this.state.bowlerType !== ''){
         console.log(this.state.query);
         console.log(this.state.bowlerType);
         const bowlerType = this.state.bowlerType;
@@ -101,7 +94,83 @@ class StatsScreen extends React.Component {
                             self.props.navigation.navigate('Stats',{
                               playerDetails: players,
                               playerName: self.state.query,
-                              criteria: self.state.bowlerType
+                              criteria: self.state.bowlerType,
+                              displayCriteria: 'Vs'
+                            })
+                        });
+      }
+    }
+    else if(this.state.criteria === '3'){
+      if(this.state.query !== '' && this.state.stadiumSelected !== ''){
+        console.log(this.state.query);
+        console.log(this.state.stadiumSelected);
+        const stadiumSelected = this.state.stadiumSelected;
+        var playersRef = firebase.database().ref('History/StadiumList/Stadium');
+        playersRef.orderByChild('Batsman').equalTo(this.state.query)
+                        .on('value', function(data){
+                            console.log(data.val());
+                            const playerList = Array.isArray(data.val()) ?  data.val() : Object.values(data.val());
+                            console.log(playerList);
+                            let players = playerList.filter((item)=>{
+                              return item.Stadium === stadiumSelected;
+                            });
+                            console.log(players);
+                            self.setState({results: [...players]});
+                            self.props.navigation.navigate('Stats',{
+                              playerDetails: players,
+                              playerName: self.state.query,
+                              criteria: self.state.stadiumSelected,
+                              displayCriteria: 'In'
+                            })
+                        });
+      }
+    }
+    else if(this.state.criteria === '2'){
+      if(this.state.query !== '' && this.state.placeSelected !== ''){
+        console.log(this.state.query);
+        console.log(this.state.placeSelected);
+        const placeSelected = this.state.placeSelected;
+        var playersRef = firebase.database().ref('History/PlaceList/Place');
+        playersRef.orderByChild('Batsman').equalTo(this.state.query)
+                        .on('value', function(data){
+                            console.log(data.val());
+                            const playerList = Array.isArray(data.val()) ?  data.val() : Object.values(data.val());
+                            console.log(playerList);
+                            let players = playerList.filter((item)=>{
+                              return item.Place === placeSelected;
+                            });
+                            console.log(players);
+                            self.setState({results: [...players]});
+                            self.props.navigation.navigate('Stats',{
+                              playerDetails: players,
+                              playerName: self.state.query,
+                              criteria: self.state.placeSelected,
+                              displayCriteria: 'In'
+                            })
+                        });
+      }
+    }
+    else if(this.state.criteria === '1'){
+      if(this.state.query !== '' && this.state.secondQuery){
+        console.log(this.state.query);
+        console.log(this.state.secondQuery);
+        const bowlerSelected = this.state.secondQuery;
+        var playersRef = firebase.database().ref('Players/BowlerList/Bowlers');
+        playersRef.orderByChild('Batsman').equalTo(this.state.query)
+                        .on('value', function(data){
+                            console.log(data.val());
+                            const playerList = Array.isArray(data.val()) ?  data.val() : Object.values(data.val());
+                            console.log(playerList);
+                            let players = playerList.filter((item)=>{
+                              return item.Bowler === bowlerSelected;
+                            });
+                            console.log(players);
+                            self.setState({results: [...players]});
+                            self.props.navigation.navigate('Stats',{
+                              playerDetails: players,
+                              playerName: self.state.query,
+                              criteria: self.state.secondQuery,
+                              displayCriteria: 'Vs'
                             })
                         });
       }
@@ -146,28 +215,26 @@ class StatsScreen extends React.Component {
         case "2":
           thirdValue = (
             <Picker
-            selectedValue={this.state.placeCriteria}
+            selectedValue={this.state.placeSelected}
             style={styles.secondPickerStyle}
-            onValueChange={(itemValue, itemIndex) => this.setState({criteria: itemValue})}>
+            onValueChange={(itemValue, itemIndex) => this.setState({placeSelected: itemValue})}>
             <Picker.Item label="Select a Filter" value="" />
-            <Picker.Item label="Aganist Particular Bowler" value="1" />
-            <Picker.Item label="At Particular Place" value="2" />
-            <Picker.Item label="At Particular Stadium" value="3" />
-            <Picker.Item label="Aganist Particular Bowler Type" value="4" />
+            {this.state.place.map((item,index)=>{
+                              return <Picker.Item key={item.id} label={item.Place} value={item.Place} />  
+                        })}
           </Picker>
           );
           break;
         case "3":
           thirdValue = (
             <Picker
-            selectedValue={this.state.placeCriteria}
+            selectedValue={this.state.stadiumSelected}
             style={styles.secondPickerStyle}
-            onValueChange={(itemValue, itemIndex) => this.setState({criteria: itemValue})}>
+            onValueChange={(itemValue, itemIndex) => this.setState({stadiumSelected: itemValue})}>
             <Picker.Item label="Select a Filter" value="" />
-            <Picker.Item label="Aganist Particular Bowler" value="1" />
-            <Picker.Item label="At Particular Place" value="2" />
-            <Picker.Item label="At Particular Stadium" value="3" />
-            <Picker.Item label="Aganist Particular Bowler Type" value="4" />
+            {this.state.stadium.map((item,index)=>{
+                              return <Picker.Item key={item.id} label={item.Stadium} value={item.Stadium} />  
+                        })}
           </Picker>
           );
           break;
@@ -241,6 +308,9 @@ class StatsScreen extends React.Component {
     return (
       <View style={{flex:1,justifyContent:'center',backgroundColor: '#F5FCFF',}}>
         {form}
+        <View style={{marginBottom: 0,justifyContent:'center',alignItems:'center',backgroundColor:'#fff'}}>
+            <Text>*Note : Stats from 2012-2017</Text>
+        </View>
       </View>
     );
     }

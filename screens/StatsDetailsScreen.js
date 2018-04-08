@@ -127,7 +127,7 @@ class StatsDetailScreen extends React.Component {
               <View style={{'justifyContent':'center','alignItems':'center',flex:1}}>
                 <View>
                     <Text style={{fontSize: 18, fontWeight: 'bold', fontFamily:'regular'}}>
-                    {this.state.playerName} <Text>Vs</Text> {this.state.criteria}
+                    {this.state.playerName} <Text>{this.state.displayCriteria}</Text> {this.state.criteria}
                     </Text>
                 </View>
                 <Divider style={styles.dividerStyle} />

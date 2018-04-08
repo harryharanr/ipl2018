@@ -59,12 +59,24 @@ class TeamsScreen extends React.Component {
                     <Text style={{fontWeight:'bold',fontFamily:'regular',fontSize:15}}>{item.TeamName}</Text>
                 </View>
                 <View style={{flex:5.3,backgroundColor:'#fff',marginLeft:5,borderRightWidth:1,borderColor:'lightgrey'}}>
-                <View style={{flexDirection:'row'}}><Zion name='persona' size={15} /><Text style={{marginLeft:5}}>{item.Coach}</Text></View>
+                <View style={{flexDirection:'column'}}>
+                  {/* <Zion name='persona' size={15} /> */}
+                  <Text style={{marginLeft:5,fontFamily: 'regular',fontWeight:'bold'}}>Coach :</Text>
+                  <Text style={{marginLeft:5,fontFamily: 'regular'}}>{item.Coach}</Text>
+                </View>
                   <Divider style={styles.dividerStyle} />
                    
-                  <View style={{flexDirection:'row'}}><Icon name='trophy' size={15} /><Text style={{marginLeft:5}}> {item.Highlights}</Text></View>
+                  <View style={{flexDirection:'column'}}>
+                    {/* <Icon name='trophy' size={15} /> */}
+                    <Text style={{marginLeft:5, fontFamily: 'regular',fontWeight: 'bold'}}>Champions :</Text>
+                    <Text style={{marginLeft:5, fontFamily: 'regular'}}>{item.Highlights}</Text>
+                  </View>
                   <Divider style={styles.dividerStyle} />
-                  <View style={{flexDirection:'row'}}><Icon name='users' size={15} /><Text style={{marginLeft:5}}>{item.Players}</Text></View>
+                  <View style={{flexDirection:'row'}}>
+                    {/* <Icon name='users' size={15} /> */}
+                    <Text style={{marginLeft:5, fontFamily: 'regular',fontWeight:'bold'}}>Players : </Text>
+                    <Text style={{marginLeft:5, fontFamily: 'regular'}}>{item.Players}</Text>
+                  </View>
                 </View>
                 <View style={{flex:0.7,backgroundColor:'#fff',marginLeft:5,justifyContent:'center' }}
                   >
