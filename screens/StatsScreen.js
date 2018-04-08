@@ -14,6 +14,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Font } from 'expo';
 import { stadiumList } from './../constants/Stadium';
 import { placeList } from './../constants/State';
+import ModalTest from '../shared/Modal/Modal';
 
 class StatsScreen extends React.Component {
   constructor(props) {
@@ -28,13 +29,16 @@ class StatsScreen extends React.Component {
       stadiumSelected: '',
       stadium: stadiumList,
       place: placeList,
-      placeSelected: ''
+      placeSelected: '',
+      modalStatus: false,
+      modalText: ''
     };
   }
 
   static navigationOptions = {
     //header: null,
     title: 'Stats',
+    headerStyle: {height: 40}
   }
 
   async componentDidMount() {
@@ -72,6 +76,20 @@ class StatsScreen extends React.Component {
     return films.filter(film => film.PlayerName.search(regex) >= 0);
   }
 
+  refreshFormValues = () => {
+    this.setState({
+      secondQuery: '',
+      criteria: '',
+      bowlerType: '',
+      results: [],
+      stadiumSelected: '',
+      stadium: stadiumList,
+      place: placeList,
+      placeSelected: '',
+      query: ''
+    })
+  }
+
 
   getStats = () => {
     var self =this;
@@ -99,13 +117,19 @@ class StatsScreen extends React.Component {
                             })
                         });
       }
+      else{
+        this.setState({
+          modalStatus: true,
+          modalText: 'PLEASE CHOOSE A BOWLER TYPE'
+        })
+      }
     }
     else if(this.state.criteria === '3'){
       if(this.state.query !== '' && this.state.stadiumSelected !== ''){
         console.log(this.state.query);
         console.log(this.state.stadiumSelected);
         const stadiumSelected = this.state.stadiumSelected;
-        var playersRef = firebase.database().ref('History/StadiumList/Stadium');
+        var playersRef = firebase.database().ref('Fixtures/StadiumList/Stadium');
         playersRef.orderByChild('Batsman').equalTo(this.state.query)
                         .on('value', function(data){
                             console.log(data.val());
@@ -123,6 +147,12 @@ class StatsScreen extends React.Component {
                               displayCriteria: 'In'
                             })
                         });
+      }
+      else{
+        this.setState({
+          modalStatus: true,
+          modalText: 'PLEASE CHOOSE A STADIUM'
+        })
       }
     }
     else if(this.state.criteria === '2'){
@@ -149,6 +179,12 @@ class StatsScreen extends React.Component {
                             })
                         });
       }
+      else{
+        this.setState({
+          modalStatus: true,
+          modalText: 'CHOOSE A PLACE'
+        })
+      }
     }
     else if(this.state.criteria === '1'){
       if(this.state.query !== '' && this.state.secondQuery){
@@ -174,7 +210,33 @@ class StatsScreen extends React.Component {
                             })
                         });
       }
+      else{
+        this.setState({
+          modalStatus: true,
+          modalText: 'PLAYER NAME IS MANDATORY'
+        })
+      }
     }
+    else{
+      if(this.state.query === ''){
+        this.setState({
+          modalStatus: true,
+          modalText: 'PLAYER NAME IS MANDATORY'
+        })
+      }else{
+        this.setState({
+          modalStatus: true,
+          modalText: 'CHOOSE A FILTER CRITERIA'
+        })
+      }
+    }
+  }
+
+  closeModal = () => {
+    this.setState({
+      modalStatus: false,
+      modalText: ''
+    });
   }
 
   render() {        
@@ -301,15 +363,23 @@ class StatsScreen extends React.Component {
                   <Text style={{color:'#fff'}}>GET STATS</Text>
                 </View>
         </TouchableOpacity>
+        <TouchableOpacity
+           onPress={this.refreshFormValues}>
+                <View style={styles.clearButton}>
+                  <Text style={{color:'black'}}>CLEAR FILTER</Text>
+                </View>
+        </TouchableOpacity>
         </View>
       </View>
       );
     }
     return (
-      <View style={{flex:1,justifyContent:'center',backgroundColor: '#F5FCFF',}}>
+      <View style={{flex:1,justifyContent:'center',backgroundColor: '#F5FCFF'}}>
+        {this.state.modalStatus?<ModalTest isModalVisible={this.state.modalStatus} toggleModal={this.closeModal} 
+          message={this.state.modalText} buttonText="CLOSE"/>: null}
         {form}
-        <View style={{marginBottom: 0,justifyContent:'center',alignItems:'center',backgroundColor:'#fff'}}>
-            <Text>*Note : Stats from 2012-2017</Text>
+        <View style={{marginBottom: 0,justifyContent:'center',alignItems:'center',backgroundColor:'lightgray'}}>
+            <Text style={{fontSize:12}}>*Note : Stats from 2012-2017</Text>
         </View>
       </View>
     );
@@ -374,6 +444,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 4,
     borderColor: 'rgba(0, 0, 0, 0.1)'
+  },
+  clearButton:{
+    backgroundColor: 'lightgray',
+    padding: 12,
+    marginLeft: 16,
+    marginRight: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    borderColor: 'black'
   },
   descriptionContainer: {
     // `backgroundColor` needs to be set otherwise the
