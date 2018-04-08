@@ -103,9 +103,13 @@ export default TabNavigator(
       }
     }),
     tabBarOptions: {
-      activeTintColor: 'tomato',
+      activeTintColor: '#F5725B',
       inactiveTintColor: 'gray',
       scrollEnabled: false,
+      style:{
+        height:65,
+        padding:5
+      }
     },
     tabBarComponent: TabBarBottom,
     tabBarPosition: 'bottom',

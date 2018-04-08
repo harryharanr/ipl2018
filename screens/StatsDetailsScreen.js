@@ -30,7 +30,8 @@ class StatsDetailScreen extends React.Component {
         
         return {
           headerTitle: params ? params.playerName : 'Stats Details',
-          left: true
+          left: true,
+          headerStyle: {height: 40}
         }
       };
 
@@ -136,7 +137,9 @@ class StatsDetailScreen extends React.Component {
                     <View style={{flex:2,backgroundColor:'#fff',justifyContent:'center',borderRightWidth:1,borderColor:'lightgrey', 'alignItems':'center'}}>
                         <Text style={{fontFamily:'regular'}}>Runs Scored : {this.state.runsScored}</Text>
                         <Divider style={styles.dividerStyle} />
-                        <Text style={{fontFamily:'regular'}}>Strike Rate : {((this.state.runsScored/this.state.ballsFaced)*100).toFixed(2)}</Text>
+                        <Text style={{fontFamily:'regular'}}>
+                            Strike Rate : {((this.state.runsScored/this.state.ballsFaced)*100).toFixed(2)>0 ? ((this.state.runsScored/this.state.ballsFaced)*100).toFixed(2):0}
+                        </Text>
                         <Divider style={styles.dividerStyle} />
                         <Text style={{fontFamily:'regular'}}>Caught & Bowled : {this.state.caughtAndBowled}</Text>
                         <Divider style={styles.dividerStyle} />
