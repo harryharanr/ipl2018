@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View, ActivityIndicator, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Card, ListItem, Button, Divider } from 'react-native-elements'
+import { Card, ListItem, Button, Divider,SearchBar } from 'react-native-elements'
 import firebase from 'firebase';
 import { Font } from 'expo';
 
@@ -9,7 +9,9 @@ class TeamDetailScreen extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-          playerDetails: []
+          playerDetails: [],
+          filteredPlayerDetails: [],
+          searchText: '',
         };
     }
     static navigationOptions = ({ navigation }) => {
@@ -20,6 +22,13 @@ class TeamDetailScreen extends React.Component {
           left: true
         }
       };
+    async componentDidMount() {
+        await Font.loadAsync({
+          'georgia': require('../assets/fonts/Georgia.ttf'),
+          'regular': require('../assets/fonts/Montserrat-Regular.ttf'),
+          'light': require('../assets/fonts/Montserrat-Light.ttf'),
+        });
+    }
     componentWillMount(){
       var self = this;
         console.log(this.props.navigation.state.params.teamId);
@@ -32,15 +41,40 @@ class TeamDetailScreen extends React.Component {
                             let players = playerList.map((item)=>{
                               return item;
                             });
-                            self.setState({playerDetails: [...players]});
+                            self.setState({
+                              playerDetails: players,
+                              filteredPlayerDetails: players
+                            });
 
                         });
     }
 
+    searchPlayer = (value) => {
+      // console.log(this.state.searchText);
+      // var searchText = this.state.searchText.toUpperCase();
+      this.setState({searchText: value});
+      var searchText = this.state.searchText.toUpperCase();
+      let filterDetails = this.state.playerDetails.filter((item) => {
+        return item.Players.toUpperCase().indexOf(searchText) > -1;
+      });
+      this.setState({
+        filteredPlayerDetails : filterDetails,
+      });
+    }
+
+    clearFilter = () => {
+      this.setState({
+        filteredPlayerDetails: this.state.playerDetails,
+        searchText: ''
+      })
+    }
+
+
+
     render() {
       let form = <ActivityIndicator style = {styles.activityIndicator}/>
       if(this.state.playerDetails.length>0){
-        form = this.state.playerDetails.map((item,index) => {
+        form = this.state.filteredPlayerDetails.map((item,index) => {
           return (
             <Card key={index} containerStyle={styles.containerStyle}>
               <View style={{flex: 1, flexDirection: 'column'}}>
@@ -55,10 +89,12 @@ class TeamDetailScreen extends React.Component {
                     <Text style={{fontWeight:'bold',fontFamily:'regular',fontSize:15}}>{item.Role}</Text>
                 </View>
                 <View style={{flex:5,backgroundColor:'#fff',marginLeft:5,borderRightWidth:1,borderColor:'lightgrey'}}>
-                  <Text style={{marginLeft:5}}>{item.PlayerWorth}</Text>
+                  <Text style={{marginLeft:5,fontFamily: 'regular',fontWeight:'bold'}}> Player Worth : </Text>
+                  <Text style={{marginLeft:10,fontFamily: 'regular'}}>{item.PlayerWorth}</Text>
                   <Divider style={styles.dividerStyle} />
                    
-                  <Text style={{marginLeft:5}}> {item.Shortform}</Text>  
+                  <Text style={{marginLeft:10,fontFamily: 'regular',fontWeight:'bold'}}>Team</Text>  
+                  <Text style={{marginLeft:10,fontFamily: 'regular'}}>{item.Shortform}</Text>
                 </View>
               </View>
               </View>
@@ -67,9 +103,18 @@ class TeamDetailScreen extends React.Component {
         })
       }
       return (
+        <View>
+        <SearchBar
+            value={this.state.searchText}
+            lightTheme={true}
+            onChangeText={(value) => this.searchPlayer(value)}
+            onClear={this.clearFilter}
+            clearIcon
+            placeholder='Search Player...' /> 
         <ScrollView>
-          {form}
+         {form}
         </ScrollView>
+        </View>
       );
     }
 }

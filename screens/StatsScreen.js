@@ -5,12 +5,15 @@ import {
   Text,
   TouchableOpacity,
   View,
+  TextInput,
   ActivityIndicator,
   Picker
 } from 'react-native';
 import firebase from 'firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Font } from 'expo';
+import { stadiumList } from './../constants/Stadium';
+import { placeList } from './../constants/State';
 
 class StatsScreen extends React.Component {
   constructor(props) {
@@ -18,22 +21,17 @@ class StatsScreen extends React.Component {
     this.state = {
       films: [],
       query: '',
-      criteria: 'java'
+      secondQuery: '',
+      criteria: '',
+      bowlerType: '',
+      results: [],
+      stadiumSelected: '',
+      stadium: stadiumList,
+      place: placeList,
+      placeSelected: ''
     };
   }
 
-  static renderFilm(film) {
-    // const { title, director, opening_crawl, episode_id } = film;
-    // const roman = episode_id < ROMAN.length ? ROMAN[episode_id] : episode_id;
-
-    return (
-      <View>
-        <Text style={styles.titleText}>{film}</Text>
-        {/* <Text style={styles.directorText}>({director})</Text>
-        <Text style={styles.openingText}>{opening_crawl}</Text> */}
-      </View>
-    );
-  }
   static navigationOptions = {
     //header: null,
     title: 'Stats',
@@ -55,7 +53,10 @@ class StatsScreen extends React.Component {
       let players = snapshot.val().map((item)=>{
         return item;
       });
-      self.setState({films: players})
+      self.setState({
+        films: players,
+        secondFilms: players
+      })
    }, function (error) {
       console.log("Error: " + error.code);
    });
@@ -72,11 +73,192 @@ class StatsScreen extends React.Component {
   }
 
 
-  render() {
-    const { query } = this.state;
+  getStats = () => {
+    var self =this;
+    if(this.state.criteria === '4'){
+      if(this.state.query !== '' && this.state.bowlerType !== ''){
+        console.log(this.state.query);
+        console.log(this.state.bowlerType);
+        const bowlerType = this.state.bowlerType;
+        var playersRef = firebase.database().ref('History/BowlerType/BowlerType');
+        playersRef.orderByChild('Batsman').equalTo(this.state.query)
+                        .on('value', function(data){
+                            console.log(data.val());
+                            const playerList = Array.isArray(data.val()) ?  data.val() : Object.values(data.val());
+                            console.log(playerList);
+                            let players = playerList.filter((item)=>{
+                              return item.Bowler_Type === bowlerType;
+                            });
+                            console.log(players);
+                            self.setState({results: [...players]});
+                            self.props.navigation.navigate('Stats',{
+                              playerDetails: players,
+                              playerName: self.state.query,
+                              criteria: self.state.bowlerType,
+                              displayCriteria: 'Vs'
+                            })
+                        });
+      }
+    }
+    else if(this.state.criteria === '3'){
+      if(this.state.query !== '' && this.state.stadiumSelected !== ''){
+        console.log(this.state.query);
+        console.log(this.state.stadiumSelected);
+        const stadiumSelected = this.state.stadiumSelected;
+        var playersRef = firebase.database().ref('History/StadiumList/Stadium');
+        playersRef.orderByChild('Batsman').equalTo(this.state.query)
+                        .on('value', function(data){
+                            console.log(data.val());
+                            const playerList = Array.isArray(data.val()) ?  data.val() : Object.values(data.val());
+                            console.log(playerList);
+                            let players = playerList.filter((item)=>{
+                              return item.Stadium === stadiumSelected;
+                            });
+                            console.log(players);
+                            self.setState({results: [...players]});
+                            self.props.navigation.navigate('Stats',{
+                              playerDetails: players,
+                              playerName: self.state.query,
+                              criteria: self.state.stadiumSelected,
+                              displayCriteria: 'In'
+                            })
+                        });
+      }
+    }
+    else if(this.state.criteria === '2'){
+      if(this.state.query !== '' && this.state.placeSelected !== ''){
+        console.log(this.state.query);
+        console.log(this.state.placeSelected);
+        const placeSelected = this.state.placeSelected;
+        var playersRef = firebase.database().ref('History/PlaceList/Place');
+        playersRef.orderByChild('Batsman').equalTo(this.state.query)
+                        .on('value', function(data){
+                            console.log(data.val());
+                            const playerList = Array.isArray(data.val()) ?  data.val() : Object.values(data.val());
+                            console.log(playerList);
+                            let players = playerList.filter((item)=>{
+                              return item.Place === placeSelected;
+                            });
+                            console.log(players);
+                            self.setState({results: [...players]});
+                            self.props.navigation.navigate('Stats',{
+                              playerDetails: players,
+                              playerName: self.state.query,
+                              criteria: self.state.placeSelected,
+                              displayCriteria: 'In'
+                            })
+                        });
+      }
+    }
+    else if(this.state.criteria === '1'){
+      if(this.state.query !== '' && this.state.secondQuery){
+        console.log(this.state.query);
+        console.log(this.state.secondQuery);
+        const bowlerSelected = this.state.secondQuery;
+        var playersRef = firebase.database().ref('Players/BowlerList/Bowlers');
+        playersRef.orderByChild('Batsman').equalTo(this.state.query)
+                        .on('value', function(data){
+                            console.log(data.val());
+                            const playerList = Array.isArray(data.val()) ?  data.val() : Object.values(data.val());
+                            console.log(playerList);
+                            let players = playerList.filter((item)=>{
+                              return item.Bowler === bowlerSelected;
+                            });
+                            console.log(players);
+                            self.setState({results: [...players]});
+                            self.props.navigation.navigate('Stats',{
+                              playerDetails: players,
+                              playerName: self.state.query,
+                              criteria: self.state.secondQuery,
+                              displayCriteria: 'Vs'
+                            })
+                        });
+      }
+    }
+  }
+
+  render() {        
+    const { query, secondQuery } = this.state;
     const films = this.findFilm(query);
+    const secondFilms = this.findFilm(secondQuery);
     const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
     let form = <ActivityIndicator style = {styles.activityIndicator}/>
+    let thirdValue = <View />
+    console.log("Check1" +this.state.criteria)
+    if(this.state.criteria !== ''){
+      console.log("Check2")
+      switch(this.state.criteria){
+        case "1":
+          thirdValue = (
+            <View>
+              <Autocomplete
+                autoCapitalize="none"
+                autoCorrect={false}
+                containerStyle={styles.autocompleteContainer}
+                inputContainerStyle = {styles.inputContainerStyle}
+                listStyle = {styles.listStyle}
+                data={secondFilms.length === 1 && comp(secondQuery, secondFilms[0].PlayerName) ? [] : secondFilms}
+                defaultValue={secondQuery}
+                onChangeText={text => this.setState({ secondQuery: text })}
+                placeholder="Enter Player Name"
+                renderItem={({ PlayerName }) => (
+                  <TouchableOpacity onPress={() => this.setState({ secondQuery: PlayerName })}>
+                    <Text style={styles.itemText}>
+                      {PlayerName}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+          );
+          break;
+        case "2":
+          thirdValue = (
+            <Picker
+            selectedValue={this.state.placeSelected}
+            style={styles.secondPickerStyle}
+            onValueChange={(itemValue, itemIndex) => this.setState({placeSelected: itemValue})}>
+            <Picker.Item label="Select a Filter" value="" />
+            {this.state.place.map((item,index)=>{
+                              return <Picker.Item key={item.id} label={item.Place} value={item.Place} />  
+                        })}
+          </Picker>
+          );
+          break;
+        case "3":
+          thirdValue = (
+            <Picker
+            selectedValue={this.state.stadiumSelected}
+            style={styles.secondPickerStyle}
+            onValueChange={(itemValue, itemIndex) => this.setState({stadiumSelected: itemValue})}>
+            <Picker.Item label="Select a Filter" value="" />
+            {this.state.stadium.map((item,index)=>{
+                              return <Picker.Item key={item.id} label={item.Stadium} value={item.Stadium} />  
+                        })}
+          </Picker>
+          );
+          break;
+        case "4":
+          thirdValue = (
+            <Picker
+            selectedValue={this.state.bowlerType}
+            style={styles.secondPickerStyle}
+            onValueChange={(itemValue, itemIndex) => this.setState({bowlerType: itemValue})}>
+            <Picker.Item label="Select a Filter" value="" />
+            <Picker.Item label="Left Arm Fast" value="Left Arm Fast" />
+            <Picker.Item label="Right Arm Fast" value="Right Arm Fast" />
+            <Picker.Item label="Right Arm legbreak" value="Right Arm legbreak" />
+            <Picker.Item label="Right Arm offbreak" value="Right Arm offbreak" />
+            <Picker.Item label="Left-arm orthodox" value="Left-arm orthodox" />
+            <Picker.Item label="Left-arm chinaman" value="Left-arm chinaman" />
+          </Picker>
+          );
+          break;
+        default:
+          thirdValue = <View />
+        
+      }
+    }
     if(this.state.films.length>0){
       form = (
         <View style={styles.container}>
@@ -111,33 +293,24 @@ class StatsScreen extends React.Component {
             <Picker.Item label="Aganist Particular Bowler Type" value="4" />
           </Picker>
         </View>
-        
-        <TouchableOpacity onPress={() => this.props.toggleModal(this.state.selectedTeam)}>
+        <View>{thirdValue}</View>
+        <View style={this.state.criteria == '1'?styles.buttonContainer: ''}>
+        <TouchableOpacity
+           onPress={this.getStats}>
                 <View style={styles.button}>
                   <Text style={{color:'#fff'}}>GET STATS</Text>
                 </View>
-        </TouchableOpacity>      
-        {/* <View style={styles.descriptionContainer}>
-            {
-              this.state.criteria == '' ? '' : this.state.criteria == '1' ? '' : 
-              <Picker
-                selectedValue={this.state.criteria}
-                style={styles.pickerStyle}
-                onValueChange={(itemValue, itemIndex) => this.setState({criteria: itemValue})}>
-                  <Picker.Item label="Select a Filter" value="" />
-                  <Picker.Item label="Aganist Particular Bowler" value="1" />
-                  <Picker.Item label="At Particular Place" value="2" />
-                  <Picker.Item label="At Particular Stadium" value="3" />
-                  <Picker.Item label="Aganist Particular Bowler Type" value="4" />
-              </Picker>
-            }
-        </View> */}
+        </TouchableOpacity>
+        </View>
       </View>
       );
     }
     return (
       <View style={{flex:1,justifyContent:'center',backgroundColor: '#F5FCFF',}}>
         {form}
+        <View style={{marginBottom: 0,justifyContent:'center',alignItems:'center',backgroundColor:'#fff'}}>
+            <Text>*Note : Stats from 2012-2017</Text>
+        </View>
       </View>
     );
     }
@@ -157,6 +330,14 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     zIndex: 1,
+  },
+  autoScompleteContainer: {
+    flex: 1,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    zIndex: 1
   },
   itemText: {
     fontSize: 15,
@@ -182,6 +363,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20
   },
+  secondPickerStyle:{
+    width: '100%'
+  },
   button: {
     backgroundColor: 'rgba(232, 147, 142, 1)',
     padding: 12,
@@ -196,6 +380,12 @@ const styles = StyleSheet.create({
     // autocomplete input will disappear on text input.
     backgroundColor: '#F5FCFF',
     marginTop: 25
+  },
+  buttonContainer: {
+    // `backgroundColor` needs to be set otherwise the
+    // autocomplete input will disappear on text input.
+    backgroundColor: '#F5FCFF',
+    marginTop: 55
   },
   listStyle: {
     padding: 10
