@@ -488,7 +488,13 @@ const styles = StyleSheet.create({
   },
   openingText: {
     textAlign: 'center'
-  }
+  },
+  activityIndicator: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 80
+ }
 });
 
 export {StatsScreen};

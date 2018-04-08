@@ -5,3 +5,4 @@ export * from './TeamsScreen';
 export * from './TwitterScreen';
 export * from './TeamDetailScreen';
 export * from './StatsDetailsScreen';
+export * from './PointsTableScreen';
