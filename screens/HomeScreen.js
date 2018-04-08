@@ -1,36 +1,30 @@
 import React from 'react';
 import { Text,View, StyleSheet } from 'react-native';
 import * as Animatable from 'react-native-animatable';
+import { StackNavigator } from 'react-navigation';
+import NextMatchScreen from './HomeScreenFeatures/NextMatch';
+import PointsTableScreen from './HomeScreenFeatures/PointsTable';
+import FixturesScreen from './HomeScreenFeatures/Fixtures';
 
-class HomeScreen extends React.Component {
-  static navigationOptions = ({ navigation }) => {
-    const { params } = navigation.state;
-    
-    return {
-      headerTitle: params ? params.teamName : 'Team Details',
-      left: true
-    }
-  };
+export class HomeScreen extends React.Component {
     render() {
       return (
-        // <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:'yellow' }}>
-        //   <Text>Home Screen!</Text>
-        // </View>
         <View style={{ flex: 1}}>
             <Animatable.View 
-            animation="fadeInLeft" iterationCount={1}
+            animation="zoomIn" iterationCount={5}
+            onPress={() => this.props.navigation.navigate('PointsTable')}
             style={styles.nextMatch}>
               <Text>Next Match</Text>
             </Animatable.View>
 
             <Animatable.View 
-            animation="fadeInRight" iterationCount={1}
+            animation="zoomInDown" iterationCount={5}
             style={styles.pointsTable}>
               <Text>Points Table</Text>
             </Animatable.View>
 
             <Animatable.View 
-            animation="fadeInUp" iterationCount={1}
+            animation="zoomInUp" iterationCount={5}
             style={styles.fixtures}>
               <Text>Fixtures</Text>
             </Animatable.View>
@@ -39,7 +33,20 @@ class HomeScreen extends React.Component {
     }
   }
 
-  export {HomeScreen};
+  export default StackNavigator({
+    Home: {
+      screen: HomeScreen,
+    },
+    NextMatch: {
+      screen: NextMatchScreen
+    },
+    PointsTable :{
+      screen: PointsTableScreen
+    },
+    Fixtures: {
+      screen: FixturesScreen
+    }
+  });
 
   const styles = StyleSheet.create({
     nextMatch:{
