@@ -113,7 +113,8 @@ class StatsDetailScreen extends React.Component {
           fieldObstruction: fieldObstruction,
           retiredHurt: retiredHurt,
           stumped: stumped,
-          criteria: this.props.navigation.state.params.criteria
+          criteria: this.props.navigation.state.params.criteria,
+          displayCriteria: this.props.navigation.state.params.displayCriteria
         });
         console.log(this.state);
     }

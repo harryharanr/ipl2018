@@ -130,7 +130,7 @@ class StatsScreen extends React.Component {
         console.log(this.state.query);
         console.log(this.state.placeSelected);
         const placeSelected = this.state.placeSelected;
-        var playersRef = firebase.database().ref('History/PlaceList/Place');
+        var playersRef = firebase.database().ref('TeamDetails/PlaceList/Place');
         playersRef.orderByChild('Batsman').equalTo(this.state.query)
                         .on('value', function(data){
                             console.log(data.val());
