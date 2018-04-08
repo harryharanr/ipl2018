@@ -9,7 +9,8 @@ import {
       StatsScreen,
       TwitterScreen,
       TeamDetailScreen,
-      StatsDetailScreen
+      StatsDetailScreen,
+      PointsTableScreen
     } from '../screens/index';
 
   const FixturesTab = TabNavigator(
@@ -66,11 +67,26 @@ import {
     },{
       initialRouteName: 'GetStats',
         headerMode:'screen'
-    })
+    });
+
+  const HomeStack = StackNavigator({
+      Home: {
+        screen: HomeScreen,
+      },
+      PointsTable :{
+        screen: PointsTableScreen
+      }
+    },{
+      initialRouteName: 'Home',
+        headerMode:'screen'
+    });
 
 export default TabNavigator(
   {
-    Home: { screen: HomeScreen },
+    Home: { screen: HomeStack,
+            navigationOptions:{
+                header: null
+    }},
     Teams: { screen: TeamStack,
       navigationOptions:{
         header: null

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text,View, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import firebase from 'firebase';
-import { Card, ListItem, Button, Divider } from 'react-native-elements'
+import { Card, ListItem, Button, Divider } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Font } from 'expo';
 
@@ -10,15 +10,6 @@ class FixturesScreen extends React.Component {
     const params = navigation.state.params || {};
 
     return {
-      // headerTitle: 'Twitter',
-      // headerRight: (
-      //   <TouchableOpacity>
-      //           <View style={styles.button}>
-      //             <Text style={{color:'#fff'}}>Filter</Text>
-      //           </View>
-              
-      //   </TouchableOpacity>
-      // ),
       header: null
     };
   };
@@ -32,7 +23,7 @@ class FixturesScreen extends React.Component {
   
   componentWillMount() {
     var self = this;
-      let ref = firebase.database().ref('Fixtures/FullFixtureList/');
+      let ref = firebase.database().ref('Fixtures/FullFixtureList/FullFixtureList');
       console.log(ref);
       ref.on("value", function(snapshot) {
         console.log(snapshot.val());
