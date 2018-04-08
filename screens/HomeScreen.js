@@ -6,7 +6,6 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Card, ListItem, Button, Divider } from 'react-native-elements';
 
 class HomeScreen extends React.Component {
-  
   constructor(props){
     super(props);
     this.state = {
@@ -156,7 +155,7 @@ class HomeScreen extends React.Component {
             </TouchableOpacity> 
           </View>
         </Card>
-        </View>
+       </View>
       );
     }
       return (
