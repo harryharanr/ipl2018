@@ -5,7 +5,7 @@ import { Card, ListItem, Button, Divider } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Font } from 'expo';
 
-class FixturesScreen extends React.Component {
+class ResultsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const params = navigation.state.params || {};
 
@@ -23,7 +23,7 @@ class FixturesScreen extends React.Component {
   
   componentWillMount() {
     var self = this;
-      let ref = firebase.database().ref('Fixtures/FullFixtureList/FullFixtureList');
+      let ref = firebase.database().ref('Fixtures/FullFixtureList/Results/Results');
       console.log(ref);
       ref.on("value", function(snapshot) {
         console.log(snapshot.val());
@@ -52,20 +52,28 @@ class FixturesScreen extends React.Component {
      if(this.state.fixtures){
        form = this.state.fixtures.map((item,index) => {
          return (
-          <Card key={index} containerStyle={item.Date == '7-Apr-18'?styles.currentContainerStyle:styles.containerStyle}>
+          <Card key={index} containerStyle={styles.containerStyle}>
             <View style={styles.footerLeftStyle}>
-              <Text style={{'justifyContent': 'flex-start','fontFamily': 'regular'}}>Date : {item.Date}</Text>
-              <Text style={{'justifyContent': 'flex-end','fontFamily': 'regular'}}>Time : {item.Time}</Text>
+              <Text style={{'justifyContent': 'flex-start','fontFamily': 'regular'}}>
+                <Text style={{fontWeight:'bold',fontSize:15}}>Match</Text> : {item.Fixtures}</Text>
+              <Text style={{'justifyContent': 'flex-end','fontFamily': 'regular'}}>
+              <Text style={{fontWeight:'bold',fontSize:15}}>Toss</Text> : {item.Toss}</Text>
             </View>
             <Divider style={styles.dividerStyle} />
-            <View style={styles.headerStyle}>
-              <Text style={{'fontWeight': 'bold','fontSize':18,'fontFamily': 'regular','padding':10}}>
-                {item.Fixtures}
-              </Text>
+            <View>
+                <Text style={{fontFamily:'regular',textDecorationLine: 'underline',fontWeight:'bold',fontSize:15}}>First Innings - {item.FirstInnings}</Text>
+                <Text style={{fontFamily:'regular',padding:3}}>{item.FirstInningsTopBattingPerformer}</Text>
+                <Text style={{fontFamily:'regular',padding:3}}>{item.FirstInningsTopBowlingPerformer}</Text>    
+                <Text style={{fontFamily:'regular',textDecorationLine: 'underline',fontWeight:'bold',fontSize:15}}>Second Innings - {item.SecondInnings}</Text>
+                <Text style={{fontFamily:'regular',padding:3}}>{item.SecondInningsTopBattingPerformer}</Text>
+                <Text style={{fontFamily:'regular',padding:3}}>{item.SecondInningsTopBowlingPerformer}</Text>
             </View>
             <Divider style={styles.dividerStyle} />
-            <View style={styles.footerRightStyle}>
-              <Text style={{'fontFamily': 'regular'}}>{item.Venue}</Text>
+            <View style={styles.footerLeftStyle}>
+              <Text style={{fontFamily:'regular',fontWeight:'bold'}}>{item.Result}</Text>
+              <Text style={{'justifyContent': 'flex-end','fontFamily': 'regular'}}>
+                <Text style={{fontWeight:'bold',fontSize:15}}>Mom</Text> : {item.MOM}
+            </Text>
             </View>
           </Card>
          );
@@ -145,4 +153,4 @@ const styles = StyleSheet.create({
  }
 });
 
-export {FixturesScreen};
+export {ResultsScreen};
