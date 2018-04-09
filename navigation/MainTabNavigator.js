@@ -10,7 +10,8 @@ import {
       TwitterScreen,
       TeamDetailScreen,
       StatsDetailScreen,
-      PointsTableScreen
+      PointsTableScreen,
+      ResultsScreen
     } from '../screens/index';
 
   const FixturesTab = TabNavigator(
@@ -19,7 +20,7 @@ import {
           screen: FixturesScreen,
         },
         Results: {
-          screen: FixturesScreen,
+          screen: ResultsScreen,
         },
       },
       {
