@@ -1,9 +1,13 @@
 import React from 'react';
-import { Text,View, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { Text,View, TouchableOpacity, StyleSheet, ActivityIndicator, Dimensions } from 'react-native';
 import firebase from 'firebase';
 import { Font } from 'expo';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Card, ListItem, Button, Divider } from 'react-native-elements';
+
+const winWidth = Dimensions.get('window').width;
+const winHeight = Dimensions.get('window').height;
+
 
 class PointsTableScreen extends React.Component {
     constructor(props){
@@ -13,10 +17,15 @@ class PointsTableScreen extends React.Component {
         }
       }
     
-      static navigationOptions = {
-        title: 'Points Table',
-        headerStyle: {height: 40}
-      }
+      static navigationOptions = ({ navigation }) => {
+        const { params } = navigation.state;
+        
+        return {
+          headerTitle: 'Points Table',
+          left: true,
+          headerStyle: {paddingBottom:15,height: winHeight*0.07}
+        }
+      };
 
       componentWillMount() {
         var self = this;
@@ -51,18 +60,18 @@ class PointsTableScreen extends React.Component {
                 <Card containerStyle={styles.containerStyle}>
                  <View>
                     <Text style={{'justifyContent': 'flex-start',fontFamily: 'regular',fontSize: 18,padding:5}}>
-                    Points Table
+                    Standings
                     </Text>
                  </View>
                 <Divider style={styles.dividerStyle} />
                 <View>
-                    <View style={{flex:1,flexDirection:'row'}}>
-                        <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:2,fontFamily:'regular'}}>Team</Text>
-                        <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:2,fontFamily:'regular'}}>Played</Text>
-                        <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:2,fontFamily:'regular'}}>Won</Text>
-                        <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:2,fontFamily:'regular'}}>Lost</Text>
-                        <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:2,fontFamily:'regular'}}>Points</Text>
-                        <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:2,fontFamily:'regular'}}>N/R</Text>
+                    <View style={{flex:1,flexDirection:'row',backgroundColor: '#f1f8ff' }}>
+                        <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:10,fontFamily:'regular'}}></Text>
+                        <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:10,fontFamily:'regular'}}>M</Text>
+                        <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:10,fontFamily:'regular'}}>W</Text>
+                        <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:10,fontFamily:'regular'}}>L</Text>
+                        <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:10,fontFamily:'regular'}}>P</Text>
+                        <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:10,fontFamily:'regular'}}>N/R</Text>
                     </View>
                 </View>
                 
@@ -71,22 +80,22 @@ class PointsTableScreen extends React.Component {
                         this.state.pointsTable.map((team,index) => {
                             return (
                             <View key={index} style={{flex:1,flexDirection:'row'}}>
-                                <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:2,fontFamily:'regular'}}>
+                                <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',backgroundColor: '#f1f8ff',padding:10,fontFamily:'regular'}}>
                                     {team.Team}
                                 </Text>
-                                <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:2,fontFamily:'regular'}}>
+                                <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:10,fontFamily:'regular'}}>
                                     {team.Matches}
                                 </Text>
-                                <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:2,fontFamily:'regular'}}>
+                                <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:10,fontFamily:'regular'}}>
                                     {team.Won}
                                 </Text>
-                                <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:2,fontFamily:'regular'}}>
+                                <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:10,fontFamily:'regular'}}>
                                     {team.Lost}
                                 </Text>
-                                <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:2,fontFamily:'regular'}}>
+                                <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:10,fontFamily:'regular'}}>
                                     {team.Points}
                                 </Text>
-                                <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:2,fontFamily:'regular'}}>
+                                <Text style={{flex:1,borderWidth:1,borderColor:'lightgrey',padding:10,fontFamily:'regular'}}>
                                     {team.RR.substr(0, 4)}
                                 </Text>
                             </View>
