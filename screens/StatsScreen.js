@@ -7,7 +7,8 @@ import {
   View,
   TextInput,
   ActivityIndicator,
-  Picker
+  Picker,
+  Dimensions
 } from 'react-native';
 import firebase from 'firebase';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -15,6 +16,9 @@ import { Font } from 'expo';
 import { stadiumList } from './../constants/Stadium';
 import { placeList } from './../constants/State';
 import ModalTest from '../shared/Modal/Modal';
+
+const winWidth = Dimensions.get('window').width;
+const winHeight = Dimensions.get('window').height;
 
 class StatsScreen extends React.Component {
   constructor(props) {
@@ -38,7 +42,7 @@ class StatsScreen extends React.Component {
   static navigationOptions = {
     //header: null,
     title: 'Stats',
-    headerStyle: {height: 40}
+    headerStyle: {paddingBottom:20,height: winHeight * 0.07}
   }
 
   async componentDidMount() {

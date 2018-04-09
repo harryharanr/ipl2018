@@ -1,9 +1,12 @@
 import React from 'react';
-import { Text, View, ActivityIndicator, StyleSheet } from 'react-native';
+import { Text, View, ActivityIndicator, StyleSheet, Dimensions } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Card, ListItem, Button, Divider } from 'react-native-elements'
 import firebase from 'firebase';
 import { Font } from 'expo';
+
+const winWidth = Dimensions.get('window').width;
+const winHeight = Dimensions.get('window').height;
 
 class StatsDetailScreen extends React.Component {
     constructor(props){
@@ -31,7 +34,7 @@ class StatsDetailScreen extends React.Component {
         return {
           headerTitle: params ? params.playerName : 'Stats Details',
           left: true,
-          headerStyle: {height: 40}
+          headerStyle: {paddingBottom:15,height: winHeight*0.07}
         }
       };
 

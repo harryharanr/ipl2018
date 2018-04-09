@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, ActivityIndicator, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Card, ListItem, Button, Divider } from 'react-native-elements'
 import firebase from 'firebase';
@@ -7,6 +7,9 @@ import { Font } from 'expo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome';  
 import Zion from 'react-native-vector-icons/Zocial';
+
+const winWidth = Dimensions.get('window').width;
+const winHeight = Dimensions.get('window').height;
 
 class TeamsScreen extends React.Component {
   constructor(props){
@@ -19,6 +22,7 @@ class TeamsScreen extends React.Component {
   static navigationOptions = {
     //header: null,
     title: 'Teams',
+    headerStyle: {paddingBottom:20,height: winHeight * 0.07}
   }
 
   componentWillMount() {

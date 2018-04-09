@@ -1,9 +1,12 @@
 import React from 'react';
-import { Text,View, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { Text,View, TouchableOpacity, StyleSheet, ActivityIndicator, Dimensions } from 'react-native';
 import firebase from 'firebase';
 import { Font } from 'expo';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Card, ListItem, Button, Divider } from 'react-native-elements';
+
+const winWidth = Dimensions.get('window').width;
+const winHeight = Dimensions.get('window').height;
 
 class HomeScreen extends React.Component {
   
@@ -17,7 +20,7 @@ class HomeScreen extends React.Component {
 
   static navigationOptions = {
     title: 'Home',
-    headerStyle: {height: 40}
+    headerStyle: {paddingBottom:20,height: winHeight * 0.07}
   }
 
   componentWillMount() {

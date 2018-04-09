@@ -1,9 +1,12 @@
 import React from 'react';
-import { Text, View, ActivityIndicator, StyleSheet } from 'react-native';
+import { Text, View, ActivityIndicator, StyleSheet, Dimensions } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Card, ListItem, Button, Divider,SearchBar } from 'react-native-elements'
 import firebase from 'firebase';
 import { Font } from 'expo';
+
+const winWidth = Dimensions.get('window').width;
+const winHeight = Dimensions.get('window').height;
 
 class TeamDetailScreen extends React.Component {
     constructor(props){
@@ -19,7 +22,8 @@ class TeamDetailScreen extends React.Component {
         
         return {
           headerTitle: params ? params.teamName : 'Team Details',
-          left: true
+          left: true,
+          headerStyle: {paddingBottom:15,height: winHeight*0.07}
         }
       };
     async componentDidMount() {
