@@ -9,6 +9,7 @@ import {
   LayoutAnimation,
   UIManager,
   KeyboardAvoidingView,
+  AsyncStorage
 } from 'react-native';
 import { Font } from 'expo';
 import { Input, Button } from 'react-native-elements'
@@ -100,9 +101,11 @@ export default class LoginScreen2 extends Component {
     // Simulate an API call
     if(this.validateEmail(loginemail) && loginpassword.length >= 8){
       firebase.auth().signInWithEmailAndPassword(loginemail, loginpassword)
-              .then(() => { 
+              .then((user) => {
+                console.log(user.uid); 
                 this.setState({ error: '', loading: false });
                 this.props.navigation.navigate('App');
+                AsyncStorage.setItem('user_data', JSON.stringify(user.uid));
                 console.log("success");
               })
               .catch((err) => {
@@ -163,8 +166,14 @@ export default class LoginScreen2 extends Component {
     if(this.validateEmail(signupemail) && signuppass.length >= 8){
       firebase.auth().createUserWithEmailAndPassword(signupemail, signuppass)
                     .then(() => {
-                      console.log("Success"); 
-                      this.setState({ error: '', loading: false }); 
+                      this.setState({
+                        modalStatus: true,
+                        modalText: 'SIGN UP SUCCESSFULLY',
+                        modalButtonText: 'LOGIN',
+                        error: '', 
+                        loading: false
+                      });
+                      //this.setState({ error: '', loading: false }); 
                     })
                     .catch((err) => {
                       console.log(err);

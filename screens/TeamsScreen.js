@@ -52,7 +52,12 @@ class TeamsScreen extends React.Component {
       if(this.state.teams.length>0){
         form = this.state.teams.map((item,index) => {
           return (
-            <TouchableOpacity key={index}  onPress={() => this.props.navigation.navigate('TeamDetails',{
+            <TouchableOpacity key={index} style={{shadowColor: 'black',
+            shadowOpacity: 0.5,
+            shadowOffset: {
+              width: 2,
+              height: 2,
+            }}} onPress={() => this.props.navigation.navigate('TeamDetails',{
               teamId: item.TeamID,
               teamName: item.TeamName,
             })}>

@@ -1,9 +1,10 @@
 import React from 'react';
-import { Text,View, TouchableOpacity, StyleSheet, ActivityIndicator, Dimensions } from 'react-native';
+import { Text,View, TouchableOpacity, StyleSheet, ActivityIndicator, Dimensions, AsyncStorage } from 'react-native';
 import firebase from 'firebase';
 import { Font } from 'expo';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Card, ListItem, Button, Divider } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/SimpleLineIcons';  
 
 const winWidth = Dimensions.get('window').width;
 const winHeight = Dimensions.get('window').height;
@@ -17,12 +18,66 @@ class HomeScreen extends React.Component {
     }
   }
 
-  static navigationOptions = {
-    title: 'Home',
-    headerStyle: {paddingBottom:20,height: winHeight * 0.07}
-  }
+  // static navigationOptions =  {
+  //   title: 'Home',
+  //   headerStyle: {paddingBottom:20,height: winHeight * 0.07},
+  //   headerRight: (
+  //     <TouchableOpacity
+  //       style={{
+  //         height: 45,
+  //         width: 45,
+  //         alignItems: 'center',
+  //         justifyContent: 'center',
+  //         backgroundColor: 'rgba(250, 250, 250, 0.7)',
+  //         borderRadius: 50,
+  //         margin: 5,
+  //         shadowColor: 'black',
+  //         shadowOpacity: 0.5,
+  //         shadowOffset: {
+  //           width: 2,
+  //           height: 2,
+  //         }
+  //       }} onPress={params.logout}
+  //       >
+  //         <Text style= {{ fontSize: 30, color: '#2980b9'}}>
+  //           <Icon name='logout' size={20} />
+  //         </Text>
+  //       </TouchableOpacity>)
+  // }
+
+  static navigationOptions = ({ navigation }) => {
+    const params = navigation.state.params || {};
+
+    return {
+      title: 'Home',
+      headerStyle: {paddingBottom:20,height: winHeight * 0.07},
+      headerRight: (
+      <TouchableOpacity
+        style={{
+          height: 45,
+          width: 45,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'rgba(250, 250, 250, 0.7)',
+          borderRadius: 50,
+          margin: 5,
+          shadowColor: 'black',
+          shadowOpacity: 0.5,
+          shadowOffset: {
+            width: 2,
+            height: 2,
+          }
+        }} onPress={params.logout}
+        >
+          <Text style= {{ fontSize: 30, color: '#2980b9'}}>
+            <Icon name='logout' size={20} />
+          </Text>
+        </TouchableOpacity>)
+    };
+  };
 
   componentWillMount() {
+    this.props.navigation.setParams({ logout: this.logout });
     var self = this;
     var m_names = new Array("Jan", "Feb", "Mar", 
         "Apr", "May", "Jun", "Jul", "Aug", "Sep", 
@@ -34,24 +89,27 @@ class HomeScreen extends React.Component {
         var curr_year = d.getFullYear().toString().substr(-2);
         var todaysDate = curr_date + "-" + m_names[curr_month] + "-" + curr_year;
         console.log(todaysDate)
-      let ref = firebase.database().ref('Fixtures/FullFixtureList/FullFixtureList');
-      console.log(ref);
-      ref.on("value", function(snapshot) {
-        let fixtures = snapshot.val().filter((item)=>{
-          return item.Date === todaysDate;
+        let ref = firebase.database().ref('Fixtures/FullFixtureList/FullFixtureList');
+        ref.orderByChild('Date').equalTo(todaysDate)
+            .on("value", function(data) {
+              const fixtures = Array.isArray(data.val()) ?  data.val() : Object.values(data.val());
+              self.setState({
+                fixtures: fixtures
+              });
+            self.getPointsTable();
+        }, function (error) {
+            console.log("Error: " + error.code);
         });
-        console.log(fixtures);
-        self.setState({
-          fixtures: fixtures
-        });
-        self.getPointsTable();
-     }, function (error) {
-        console.log("Error: " + error.code);
-     });
+  }
+
+  logout = () => {
+    AsyncStorage.removeItem('user_data',(err) => console.log('finished', err));
+    this.props.navigation.navigate('Auth');
   }
 
   getPointsTable = () => {
     var self = this;
+    console.log(this.state.fixtures);
     let ref = firebase.database().ref('Fixtures/FullFixtureList/PointsTable/PointsTable');
       console.log(ref);
       ref.on("value", function(snapshot) {
