@@ -158,14 +158,14 @@ class HomeScreen extends React.Component {
               );
             })
           }
-          <View style={styles.footerRightStyle}>
+          {/* <View style={styles.footerRightStyle}>
             <TouchableOpacity>
                   <View style={styles.button}>
                     <Text style={{color:'#fff'}}>GO TO FIXTURES >></Text>
                   </View>
                 
             </TouchableOpacity> 
-          </View>
+          </View> */}
         </Card>
         <Card containerStyle={styles.containerStyle}>
           <View>
