@@ -191,7 +191,7 @@ class StatsScreen extends React.Component {
       }
     }
     else if(this.state.criteria === '1'){
-      if(this.state.query !== '' && this.state.secondQuery){
+      if(this.state.query !== '' && this.state.secondQuery && this.state.query === 'Rohit Sharma'){
         console.log(this.state.query);
         console.log(this.state.secondQuery);
         const bowlerSelected = this.state.secondQuery;
